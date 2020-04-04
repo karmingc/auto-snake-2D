@@ -64,11 +64,7 @@ def gameLoop():
     #speed
     increase = 1
     direction = 1
-    police_speed = 5
-
-    #auto police
-    policex2 = 10
-    policey2 = 10
+    police_speed = 10
 
     while not game_over:
  
@@ -113,12 +109,8 @@ def gameLoop():
             y1 = dis_height
         #adjust the x,y changes    
         x1 += x1_change
-        # y1 += y1_change
         y1 += y1_change
-        # print(x1, y1)
         dis.fill(black)
-
-
         
         #automatic police changer
         #need to set initial direction
@@ -127,25 +119,13 @@ def gameLoop():
             direction = 1
         elif policex == 350:
             direction = -1
-        policex += police_speed * direction * increase        
-        # print(policex, policey)
-
-        #police chaser
-        if x1 > policex2:
-            policex2 += police_speed 
-        if y1 > policey2:
-            policey2 += police_speed
-
-        if x1 < policex2:
-            policex2 -= police_speed
-        if y1 < policey2:
-            policey2 -= police_speed
+        policex += police_speed * direction * increase
+        print(policex)
 
 
         
         pygame.draw.rect(dis, red, [foodx, foody, snake_block, snake_block])
         pygame.draw.rect(dis, yellow, [policex, policey, snake_block, snake_block])
-        pygame.draw.rect(dis, yellow, [policex2, policey2, snake_block, snake_block])
         #always change the value of head as it goes
         snake_Head = []
         snake_Head.append(x1)
@@ -167,23 +147,23 @@ def gameLoop():
         pygame.display.update()
 
         #if it hits the police
-        if (x1 == policex or x1 == policex2) and (y1 == policey or y1 == policey2):                
+        if x1 == policex and y1 == policey:
             game_close = True
-
-        if (x1 >= policex - 10 and x1 <= policex + 10) and (y1 <= policey+20 and y1 >= policey):
-            y1_change = 0
-        # else:
-        #     y1_change = -10
-            
 
         #if it touches the apple    
         if x1 == foodx and y1 == foody:
             foodx = round(random.randrange(0, dis_width - snake_block) / 10.0) * 10.0
             foody = round(random.randrange(0, dis_height - snake_block) / 10.0) * 10.0            
+            if police_speed < 0:
+                police_speed -= 10
+                print(police_speed)
+            else:
+                police_speed += 10
+                print(police_speed)
             current_score += 1
             # Length_of_snake += 1
  
-        clock.tick(snake_speed)        
+        clock.tick(snake_speed)
  
     pygame.quit()
     quit()
