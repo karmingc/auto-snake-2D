@@ -173,7 +173,7 @@ def gameLoop():
         if (x1 == policex and y1 == policey) or (x1 == policex2 and y1 == policey2):                
             game_close = True
             end_time = time.time()
-            print(end_time - start_time)  
+            print("time: " + str(end_time - start_time), "score: " + str(current_score))  
 
         if (x1 >= policex - 10 and x1 <= policex + 10) and (y1 <= policey+20 and y1 >= policey):
             y1_change = 0
