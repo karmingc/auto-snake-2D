@@ -95,18 +95,31 @@ def gameLoop():
             if event.type == pygame.QUIT:
                 game_over = True
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_a:
                     x1_change = -snake_block
                     y1_change = 0
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_d:
                     x1_change = snake_block
                     y1_change = 0
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_w:
                     y1_change = -snake_block
                     x1_change = 0
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_x:
                     y1_change = snake_block
                     x1_change = 0
+                # diagonal  
+                if event.key == pygame.K_q:
+                    y1_change = -snake_block
+                    x1_change = -snake_block
+                if event.key == pygame.K_e:
+                    y1_change = -snake_block
+                    x1_change = snake_block
+                if event.key == pygame.K_z:
+                    y1_change = snake_block
+                    x1_change = -snake_block
+                if event.key == pygame.K_c:
+                    y1_change = snake_block
+                    x1_change = snake_block                                                            
         #the borders are not limits
         if x1 > dis_width:
             x1 = 0

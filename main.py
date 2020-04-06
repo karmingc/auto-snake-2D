@@ -8,12 +8,12 @@ pygame.init()
 white = (255, 255, 255)
 yellow = (255, 255, 102)
 black = (0, 0, 0)
-red = (213, 50, 80)
+red = (213, 30, 80)
 green = (0, 255, 0)
 
  
-dis_width = 400
-dis_height = 400
+dis_width = 300
+dis_height = 300
  
 dis = pygame.display.set_mode((dis_width, dis_height))
  
@@ -31,8 +31,6 @@ def Your_score(score):
     value = score_font.render("Your Score: " + str(score), True, white)
     dis.blit(value, [round(0), round(0)])
  
- 
- 
 def our_snake(snake_block, snake_list):
     pygame.draw.rect(dis, white, [round(snake_list[0][0]), round(snake_list[0][1]), snake_block, snake_block])
  
@@ -41,8 +39,11 @@ def message(msg, color):
     mesg = font_style.render(msg, True, color)
     dis.blit(mesg, [round(dis_width / 6), round(dis_height / 3)])
  
-def shortestPath(police_x, police_y, snake_x, snake_y):
-    return 2
+def police(speed):
+    policex = round(random.randrange(0, dis_width - snake_block) / 10) * 10
+    policey = round(random.randrange(0, dis_width - snake_block) / 10) * 10
+    return policex, policey, speed
+
  
 def gameLoop():
     game_over = False
@@ -61,15 +62,15 @@ def gameLoop():
     foody = round(random.randrange(0, dis_height - snake_block) / 10) * 10    
  
     policex = dis_width/2
-    policey = 50
+    policey = 30
     #speed
     increase = 1
     direction = 1
-    police_speed = 10
+    # police_speed = 10
 
     #auto police
-    policex2 = 10
-    policey2 = 10
+    policex2, policey2, police_speed = police(10)
+    
 
     start_time = time.time()
 
@@ -115,31 +116,79 @@ def gameLoop():
             y1 = 0
         if y1 < 0:
             y1 = dis_height
-        #adjust the x,y changes    
-        x1 += x1_change
+        
+        #auto snake, while chasing for food 
+        # horizontal movements       
+        if x1 > foodx:  
+            if x1+30 >= policex2 and policex2 > x1:
+                x1 -= 10                
+            elif x1-30 <= policex2 and policex2 < x1:
+                x1 += 10                
+            else:
+                x1 -= 10
+        elif x1 < foodx:
+            if x1+30 >= policex2 and policex2 > x1:
+                x1 -= 10                
+            elif x1-30 <= policex2 and policex2 < x1:
+                x1 += 10                
+            else:
+                x1 += 10    
+        else:
+            if (x1+30 >= policex2 and policex2 > x1) and (y1+30 >= policey2 and y1-30 < policey2):
+                x1 -= 10                
+            elif (x1-30 <= policex2 and policex2 < x1) and (y1+30 >= policey2 and y1-30 < policey2):
+                x1 += 10     
+        # vertical movements             
+        if y1 > foody:
+            if y1+30 >= policey2 and policey2 > y1:
+                y1 -= 10                
+            elif y1-30 <= policey2 and policey2 < y1:
+                y1 += 10                
+            else:
+                y1 -= 10        
+        elif y1 < foody:
+            if y1+30 >= policey2 and policey2 > y1:
+                y1 -= 10
+                # print('closed from top')
+            elif y1-30 <= policey2 and policey2 < y1:
+                y1 += 10
+                # print('closed from bot')
+            else:
+                y1 += 10   
+        else:
+            if (y1+30 >= policey2 and policey2 > y1) and (x1+30 >= policex2 and x1-30 < policex2):
+                y1 -= 10
+                # print('closed from top')
+            elif (y1-30 <= policey2 and policey2 < y1) and (x1+30 >= policex2 and x1-30 < policex2):
+                y1 += 10
+
+
+
+
+        
+
+
+
+        
+        # x1 += x1_change        
         # y1 += y1_change
-        y1 += y1_change
-        # print(x1, y1)
+        
         dis.fill(black)
-
-
         
         #automatic police changer
         #need to set initial direction
         #once it hits the limits on one side, you switch the direction
-        if policex == 50:
+        if policex == 30:
             direction = 1
         elif policex == 350:
             direction = -1
-        policex += police_speed * direction * increase        
-        # print(policex, policey)
+        policex += police_speed * direction * increase                
 
         #police chaser
         if x1 > policex2:
             policex2 += police_speed 
         if y1 > policey2:
             policey2 += police_speed
-
         if x1 < policex2:
             policex2 -= police_speed
         if y1 < policey2:
@@ -158,27 +207,19 @@ def gameLoop():
         #the moment current score was the same, it did not delete the first one
         if len(snake_List) > 1:
             del snake_List[0]
-            
- 
-        # for x in snake_List[:-1]:
-        #     if x == snake_Head:
-        #         game_close = True
- 
         our_snake(snake_block, snake_List)
         Your_score(current_score)
- 
         pygame.display.update()
-
+        print("position of snake: " + str(x1) + ", " + str(y1) + ", position of police: " + str(policex2) + ", " + str(policey2))
         #if it hits the police
         if (x1 == policex and y1 == policey) or (x1 == policex2 and y1 == policey2):                
             game_close = True
             end_time = time.time()
             print("time: " + str(end_time - start_time), "score: " + str(current_score))  
+            print("caught! position of snake: " + str(x1) + ", " + str(y1) + ", position of police: " + str(policex2) + ", " + str(policey2))
 
-        if (x1 >= policex - 10 and x1 <= policex + 10) and (y1 <= policey+20 and y1 >= policey):
-            y1_change = 0
-        # else:
-        #     y1_change = -10
+        # if (x1 >= policex - 10 and x1 <= policex + 10) and (y1 <= policey+20 and y1 >= policey):
+        #     y1_change = 0        
             
 
         #if it touches the apple    
